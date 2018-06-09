@@ -1,0 +1,3 @@
+BITMAP image "image.bmp"
+
+

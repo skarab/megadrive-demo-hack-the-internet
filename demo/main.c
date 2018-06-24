@@ -1,7 +1,7 @@
-#include "genesis.h"
 #include "helpers.h"
-#include "music.h"
-#include "res/resources.h"
+#include "effect_title.h"
+#include "effect_logout.h"
+#include "effect_tube.h"
 
 int main()
 {
@@ -10,50 +10,22 @@ int main()
     VDP_setScreenWidth256();
 
     SND_startPlay_PCM(music, sizeof(music), SOUND_RATE_22050, SOUND_PAN_CENTER, 0);
+    SOUND_LowPassFilterInitialize();
 
-    u16 w = image.w;
-    u16 h = image.h;
-    VDP_loadBMPTileData((u32*)image.image, 1, w/8, h/8, w/8);
-    int y;
-    for (y=0 ; y<VDP_getPlanHeight()/(h/8); ++y)
-        VDP_fillTileMapRectInc(APLAN, TILE_ATTR_FULL(PAL0, 0, 0, 0, 1), 0, y*(h/8), w/8, h/8);
+    EFFECT_Title(2000);
+    EFFECT_Tube(8500);
+    EFFECT_Logout(10500);
+    EFFECT_Tube(17000);
+    EFFECT_Title(19000);
+    EFFECT_Tube(29000);
+    EFFECT_Logout(31000);
+    EFFECT_Tube(50000);
+    EFFECT_Title(52000);
+    EFFECT_Tube(56000);
+    EFFECT_Logout(58000);
 
-    int RawData;
-    signed long SmoothDataINT;
-    signed long SmoothDataFP;
-    int Beta = 6; // Length of the filter < 16
+    while (1) {}
+    SND_stopPlay_PCM();
 
-    while(1)
-    {
-        u32 time = SOUND_GetTime(music);
-        u8 data = music[time];
-
-        RawData = (data-127)*2;
-        SmoothDataFP = (SmoothDataFP<< Beta)-SmoothDataFP;
-        SmoothDataFP += RawData;
-        SmoothDataFP >>= Beta;
-
-        int m = SmoothDataFP;
-        if (m<0) m = -m;
-        m *= 4;
-        if (m>255) m = 255;
-
-        int k;
-        for (k=0 ; k<16 ; ++k)
-         {
-            int r = ((u16*)image.palette->data)[k]&15;
-            int g = (((u16*)image.palette->data)[k]>>4)&15;
-            int b = (((u16*)image.palette->data)[k]>>8)&15;
-
-            r = (r*m)/255;
-            g = (g*m)/255;
-            b = (b*m)/255;
-
-            VDP_setPaletteColor(k, r|(g<<4)|(b<<8));
-        }
-    }
-
-       SND_stopPlay_PCM();
-
-       return 0;
+    return 0;
 }

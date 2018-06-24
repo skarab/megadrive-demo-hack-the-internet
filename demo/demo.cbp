@@ -22,6 +22,9 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="effect_logout.h" />
+		<Unit filename="effect_title.h" />
+		<Unit filename="effect_tube.h" />
 		<Unit filename="helpers.c">
 			<Option compilerVar="CC" />
 		</Unit>
